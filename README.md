@@ -12,7 +12,9 @@ geen React-runtime, client-side state, database of applicatie-authenticatie.
   buildartefact.
 - De publieke site bevat geen ChatGPT-sign-inroutes of identity-headerlogica.
 - `public/evidence/load-test-methodology.html` beschrijft de loadtestresultaten,
-  interpretatie, beperkingen en ontbrekende bronartefacten.
+  interpretatie en beperkingen.
+- `public/evidence/artifacts/` bevat de originele Azure-input, resultaten en
+  logs, een berekende JSON-samenvatting en SHA-256-checksums.
 
 De eerdere Next.js/vinext-, React-, D1-, Drizzle- en ChatGPT-authscaffolding is
 verwijderd omdat de portfoliosite die functionaliteit niet gebruikt.
@@ -47,12 +49,11 @@ https://gozzy82.github.io/amsterdam750-public/
 
 ## Bewijsstatus
 
-De huidige bron beschrijft een vijf minuten durende Azure Load Testing-run met
-meer dan 126.000 succesvolle requests, 0% mislukte HTTP-requests en een
-gerapporteerde p95 onder 650 ms. De originele Azure-export en het testschema
-waren niet aanwezig in deze checkout en zijn daarom niet gereconstrueerd of
-verzonnen. Zie de methodologiepagina voor wat nog nodig is om de resultaten
-onafhankelijk reproduceerbaar te maken.
+De gepubliceerde brondata beschrijft een vijf minuten durende Azure Load
+Testing-run met 250 virtuele gebruikers. De ruwe CSV bevat 126.124 succesvolle
+POST-registraties, 126.129 CORS-preflights en geen fouten. Berekend over de
+POST-resultaten bedraagt de throughput 420,57 requests per seconde en de p95
+634 ms. Zie de methodologiepagina voor definities, downloads en beperkingen.
 
 ## Publieke toegang
 

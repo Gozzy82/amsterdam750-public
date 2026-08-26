@@ -1,0 +1,3 @@
+4a40139f6cc2f2ba96e9c2c6943b8c80d57aeafc25bab6494827dc142a446365  azure-load-test-input-artifacts.zip
+a09fd506e6e349869c620b2a2c5bf6b782f181a568e25b37c55467c6d3b201fd  azure-load-test-logs.zip
+eed9e8ebf687b65ad07695dd7359de2daebf7f494e23e38ceef3ca49a95179d5  azure-load-test-results-csv.zip

@@ -5,6 +5,12 @@ import test from "node:test";
 
 const distDirectory = resolve("dist");
 const html = await readFile(resolve(distDirectory, "index.html"), "utf8");
+const summary = JSON.parse(
+  await readFile(
+    resolve(distDirectory, "evidence", "artifacts", "summary.json"),
+    "utf8",
+  ),
+);
 
 test("builds the public portfolio metadata and evidence links", () => {
   assert.match(html, /<html\s+lang="nl">/i);
@@ -27,6 +33,28 @@ test("references assets that exist in the production build", async () => {
   await Promise.all(
     assetReferences.map((assetPath) =>
       access(resolve(distDirectory, assetPath.slice(2))),
+    ),
+  );
+});
+
+test("publishes internally consistent load-test evidence", async () => {
+  assert.equal(summary.preregisterSubmit.count, 126124);
+  assert.equal(summary.preregisterSubmit.successful, 126124);
+  assert.equal(summary.preregisterSubmit.failed, 0);
+  assert.equal(summary.preregisterSubmit.p95Milliseconds, 634);
+  assert.equal(
+    summary.allRequests.count,
+    summary.preregisterSubmit.count + summary.corsPreflight.count,
+  );
+
+  await Promise.all(
+    [
+      "azure-load-test-input-artifacts.zip",
+      "azure-load-test-results-csv.zip",
+      "azure-load-test-logs.zip",
+      "SHA256SUMS.txt",
+    ].map((fileName) =>
+      access(resolve(distDirectory, "evidence", "artifacts", fileName)),
     ),
   );
 });

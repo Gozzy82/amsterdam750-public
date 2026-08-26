@@ -64,9 +64,9 @@
     <main>
       <h1>Loadtestmethodologie en bewijsstatus</h1>
       <p>
-        Deze pagina maakt expliciet onderscheid tussen de door de projectauteur
-        gerapporteerde resultaten en de bronartefacten die in de publieke
-        repository controleerbaar zijn.
+        Deze pagina beschrijft hoe de cijfers rechtstreeks uit de gepubliceerde
+        ruwe JMeter-resultaten zijn berekend. De originele inputbestanden,
+        resultaten en workerlog zijn hieronder te downloaden.
       </p>
 
       <h2>Gerapporteerde testrun</h2>
@@ -86,11 +86,17 @@
           </tr>
           <tr>
             <th scope="row">Volume</th>
-            <td>Meer dan 126.000 succesvolle HTTP-requests</td>
+            <td>
+              126.124 functioneel gevalideerde POST-registraties en 126.129
+              CORS-preflights; 252.253 requests in totaal
+            </td>
           </tr>
           <tr>
             <th scope="row">Gemiddelde throughput</th>
-            <td>Circa 420 requests per seconde over de volledige run</td>
+            <td>
+              420,57 POST-registraties per seconde en 838,63 requests per
+              seconde inclusief CORS-preflights
+            </td>
           </tr>
           <tr>
             <th scope="row">Mislukte requests</th>
@@ -98,7 +104,10 @@
           </tr>
           <tr>
             <th scope="row">Latency</th>
-            <td>Gerapporteerde p95-responstijd onder 650 ms</td>
+            <td>
+              POST: p50 540 ms, p90 608 ms, p95 634 ms en p99 691 ms,
+              berekend over de ruwe CSV
+            </td>
           </tr>
         </tbody>
       </table>
@@ -106,41 +115,84 @@
       <h2>Meetdefinities</h2>
       <ul>
         <li>
-          Een succesvolle request is een request die volgens de loadtest geen
-          transport- of HTTP-fout opleverde.
+          Een succesvolle POST moest HTTP 200 retourneren en de verwachte
+          succesmarkup en bevestigingstekst bevatten. Deze assertions staan in
+          het gepubliceerde JMeter-script.
         </li>
         <li>
           “0% fouten” betekent niet dat de volledige productieflow onder alle
           omstandigheden foutloos is.
         </li>
         <li>
-          De p95 is de grens waarbinnen 95% van de gemeten responstijden viel.
+          Percentielen op deze pagina gebruiken de nearest-rankmethode over
+          <code>elapsed</code> in de ruwe JMeter-CSV. Azure Portal kan licht
+          afwijkende waarden tonen wanneer het tijdvensters aggregeert.
         </li>
         <li>
-          De gemiddelde throughput is afgeleid uit
-          <code>126.000 / 300 = 420</code> requests per seconde.
+          De POST-throughput is afgeleid uit
+          <code>126.124 / 299,888 = 420,57</code> requests per seconde.
         </li>
       </ul>
 
-      <h2>Benodigde bronartefacten</h2>
+      <h2>Bronartefacten</h2>
       <div class="status">
-        <strong>Bewijsstatus: onvolledig.</strong>
-        De oorspronkelijke Azure Load Testing-export, het testschema, de
-        geanonimiseerde testdata en de infrastructuurversie zijn nog niet in
-        deze checkout aanwezig. Zonder die bestanden zijn de cijfers
-        transparant beschreven, maar niet onafhankelijk reproduceerbaar.
+        <strong>Bewijsstatus: ruwe testartefacten gepubliceerd.</strong>
+        De Azure Load Testing-resultaten, inputbestanden en engine-log zijn
+        beschikbaar met SHA-256-checksums. De exacte backendcode en
+        infrastructuurversie van de testrun zijn niet onderdeel van deze
+        portfoliorepository; een identieke herhaling blijft daarvan afhankelijk.
       </div>
-      <p>Voor volledige verificatie moet de publieke repository bevatten:</p>
-      <ol>
-        <li>het gebruikte JMeter- of YAML-testschema;</li>
-        <li>de Azure Load Testing CSV- of dashboardexport;</li>
-        <li>de exacte commit en infrastructuurconfiguratie van de testrun;</li>
-        <li>regio, runtime/SKU, warmingbeleid en concurrencyprofiel;</li>
+      <ul>
         <li>
-          een beschrijving van validaties waarmee een request als functioneel
-          succesvol gold.
+          <a href="./artifacts/azure-load-test-input-artifacts.zip">
+            Input artifacts: config.yaml en JMeter-testplan
+          </a>
         </li>
-      </ol>
+        <li>
+          <a href="./artifacts/azure-load-test-results-csv.zip">
+            Ruwe Azure Load Testing/JMeter-resultaten (CSV, gecomprimeerd)
+          </a>
+        </li>
+        <li>
+          <a href="./artifacts/azure-load-test-logs.zip">
+            Azure Load Testing engine-log
+          </a>
+        </li>
+        <li>
+          <a href="./artifacts/summary.json">
+            Machineleesbare, uit de CSV berekende samenvatting
+          </a>
+        </li>
+        <li>
+          <a href="./artifacts/SHA256SUMS.txt">SHA-256-checksums</a>
+        </li>
+      </ul>
+
+      <h2>Controleerbare resultaten</h2>
+      <table>
+        <thead>
+          <tr>
+            <th scope="col">Meting</th>
+            <th scope="col">POST-registraties</th>
+            <th scope="col">Alle requests</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><th scope="row">Aantal</th><td>126.124</td><td>252.253</td></tr>
+          <tr><th scope="row">Fouten</th><td>0</td><td>0</td></tr>
+          <tr><th scope="row">Throughput</th><td>420,57/s</td><td>838,63/s</td></tr>
+          <tr><th scope="row">Gemiddelde</th><td>526,59 ms</td><td>268,02 ms</td></tr>
+          <tr><th scope="row">p90</th><td>608 ms</td><td>580 ms</td></tr>
+          <tr><th scope="row">p95</th><td>634 ms</td><td>608 ms</td></tr>
+          <tr><th scope="row">p99</th><td>691 ms</td><td>668 ms</td></tr>
+          <tr><th scope="row">Maximum</th><td>1.708 ms</td><td>14.801 ms</td></tr>
+        </tbody>
+      </table>
+
+      <p>
+        Het maximum van 14.801 ms zat in een CORS-preflight tijdens de
+        opstart/ramp-up. Het maximale POST-resultaat was 1.708 ms.
+      </p>
 
       <h2>Acceptatiecriteria voor een herhaling</h2>
       <ul>

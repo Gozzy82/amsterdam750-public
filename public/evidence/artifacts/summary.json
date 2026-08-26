@@ -1,0 +1,64 @@
+{
+  "source": {
+    "tool": "Azure Load Testing",
+    "testId": "preregister-t250-300s",
+    "testPlan": "preregister_unique_cookie_per_request_T250_300sec.jmx",
+    "jmeterVersion": "5.6.3",
+    "engineInstances": 1,
+    "virtualUsers": 250,
+    "rampUpSeconds": 60,
+    "configuredDurationSeconds": 300,
+    "firstSampleUtc": "2026-07-18T15:38:15.001Z",
+    "lastSampleCompletedUtc": "2026-07-18T15:43:15.794Z"
+  },
+  "calculation": {
+    "durationBasis": "last sample completion minus first sample start",
+    "percentileMethod": "nearest-rank over elapsed milliseconds in the raw JMeter CSV"
+  },
+  "allRequests": {
+    "count": 252253,
+    "successful": 252253,
+    "failed": 0,
+    "errorPercentage": 0,
+    "observedDurationSeconds": 300.793,
+    "throughputRequestsPerSecond": 838.627,
+    "meanMilliseconds": 268.023,
+    "p50Milliseconds": 104,
+    "p90Milliseconds": 580,
+    "p95Milliseconds": 608,
+    "p99Milliseconds": 668,
+    "maximumMilliseconds": 14801
+  },
+  "corsPreflight": {
+    "count": 126129,
+    "successful": 126129,
+    "failed": 0,
+    "responseCode": 204,
+    "observedDurationSeconds": 300.709,
+    "throughputRequestsPerSecond": 419.439,
+    "meanMilliseconds": 9.462,
+    "p50Milliseconds": 5,
+    "p90Milliseconds": 9,
+    "p95Milliseconds": 14,
+    "p99Milliseconds": 51,
+    "maximumMilliseconds": 14801
+  },
+  "preregisterSubmit": {
+    "count": 126124,
+    "successful": 126124,
+    "failed": 0,
+    "responseCode": 200,
+    "observedDurationSeconds": 299.888,
+    "throughputRequestsPerSecond": 420.57,
+    "meanMilliseconds": 526.594,
+    "p50Milliseconds": 540,
+    "p90Milliseconds": 608,
+    "p95Milliseconds": 634,
+    "p99Milliseconds": 691,
+    "maximumMilliseconds": 1708,
+    "functionalAssertions": [
+      "HTTP response code equals 200",
+      "Response body contains the expected success markup and confirmation text"
+    ]
+  }
+}
