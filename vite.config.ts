@@ -8,6 +8,7 @@ export default defineConfig(() => {
   process.env.MINIFLARE_REGISTRY_PATH ??= ".wrangler/registry";
 
   return {
+    base: "./",
     server: {
       host: "0.0.0.0",
       allowedHosts: ["terminal.local"],

@@ -40,6 +40,11 @@ Publiceer deze checkout daar samen met de oorspronkelijke, geschoonde
 loadtestartefacten. Publiceer nooit secrets, tokens, echte persoonsgegevens of
 ongeanonimiseerde testdata.
 
+De publiek toegankelijke portfoliosite wordt vanuit `main` naar GitHub Pages
+gedeployed:
+
+https://gozzy82.github.io/amsterdam750-public/
+
 ## Bewijsstatus
 
 De huidige bron beschrijft een vijf minuten durende Azure Load Testing-run met
@@ -51,7 +56,6 @@ onafhankelijk reproduceerbaar te maken.
 
 ## Publieke toegang
 
-De applicatie bevat geen authenticatie. Als de gedeployde `chatgpt.site` toch
-“Sign in required” toont, komt die toegangsregel uit de hosting-control-plane en
-niet uit deze repository. Zet voor dit project de hosting access policy op
-publiek/anoniem voordat je de portfolio-URL deelt.
+De applicatie en de GitHub Pages-deployment bevatten geen authenticatie. De
+Pages-workflow voert voor iedere deployment eerst typecheck, lint, build en
+tests uit.
