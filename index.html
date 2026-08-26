@@ -1,0 +1,505 @@
+<!doctype html>
+<html lang="nl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Amsterdam 750 - Engineering Case Study</title>
+    <meta
+      name="description"
+      content="Waarom Gerko Schrieken een secure, serverless Amsterdam 750 pre-registratieplatform bouwde met Azure, HTMX en security-by-design."
+    />
+    <meta property="og:title" content="Amsterdam 750 - Engineering Case Study" />
+    <meta
+      property="og:description"
+      content="Eenvoud op schaal. Security by design. Een Azure- en HTMX-case van Gerko Schrieken."
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="nl_NL" />
+    <meta property="og:image" content="/og.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Amsterdam 750 - Engineering Case Study" />
+    <meta
+      name="twitter:description"
+      content="Eenvoud op schaal. Security by design. Een Azure- en HTMX-case van Gerko Schrieken."
+    />
+    <meta name="twitter:image" content="/og.png" />
+    <link rel="icon" href="/favicon.svg" />
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <main>
+      <nav class="topbar" aria-label="Hoofdnavigatie">
+        <a class="wordmark" href="#top" aria-label="Gerko Schrieken, naar boven">
+          <span>GS</span>
+          <strong>Gerko Schrieken</strong>
+        </a>
+        <div class="navlinks">
+          <a href="#waarom">Waarom</a>
+          <a href="#frontend">Frontend</a>
+          <a href="#security">Security</a>
+          <a href="#architectuur">Architectuur</a>
+          <a href="#bewijs">Bewijs</a>
+        </div>
+      </nav>
+
+      <header id="top" class="hero section-shell">
+        <div class="hero-kicker">
+          <span>Engineering case study</span>
+          <span>2026</span>
+        </div>
+        <div class="hero-grid">
+          <div class="hero-copy">
+            <p class="eyebrow">Azure · Security · HTMX</p>
+            <h1>
+              Een wachtrij was voor mij geen eindpunt.
+              <em>Het was een ontwerpvraag.</em>
+            </h1>
+            <p class="lede">
+              Toen bezoekers uren in de digitale rij stonden voor Amsterdam 750,
+              wilde ik niet alleen zeggen dat het eenvoudiger kon. Ik wilde het
+              bouwen, beveiligen en onder hoge belasting bewijzen.
+            </p>
+            <div class="hero-actions">
+              <a class="button button-primary" href="#waarom">Lees het verhaal</a>
+              <a
+                class="button button-quiet"
+                href="https://github.com/Gozzy82/amsterdam750-public"
+                target="_blank"
+                rel="noreferrer"
+              >
+                Bekijk de repository <span aria-hidden="true">↗</span>
+              </a>
+            </div>
+          </div>
+          <div class="hero-mark" aria-hidden="true">
+            <span>AMS</span>
+            <strong>750</strong>
+            <small>simple · secure · scalable</small>
+          </div>
+        </div>
+      </header>
+
+      <section class="proof-strip" aria-label="Gerapporteerde loadtestresultaten">
+        <div class="section-shell proof-grid">
+          <div class="proof-point">
+            <strong>126.000+</strong>
+            <span>succesvolle testrequests in 5 minuten</span>
+          </div>
+          <div class="proof-point">
+            <strong>0%</strong>
+            <span>mislukte HTTP-requests in de testrun</span>
+          </div>
+          <div class="proof-point">
+            <strong>&lt; 650 ms</strong>
+            <span>gerapporteerde p95-responstijd</span>
+          </div>
+          <p class="proof-note">
+            Gemeten met Azure Load Testing. Zie de methodologie en bewijsstatus
+            verderop voor de precieze interpretatie.
+          </p>
+        </div>
+      </section>
+
+      <section id="waarom" class="section-shell story-section">
+        <div class="section-index">01 / Aanleiding</div>
+        <div class="story-grid">
+          <h2>Van frustratie naar een toetsbare hypothese.</h2>
+          <div class="story-copy">
+            <p class="large-copy">
+              Bij de ticketuitgifte voor festival Op de Ring stonden mensen uren
+              in een digitale wachtrij. Wie uiteindelijk binnenkwam, kon alsnog
+              foutmeldingen krijgen; in enkele gevallen konden tickets opnieuw
+              worden besteld zonder opnieuw aan te sluiten.
+            </p>
+            <p>
+              Mijn hypothese: voor een pre-registratie hoeft een browser geen
+              uren een plek in de rij vast te houden. Laat iemand zijn
+              belangstelling snel en veilig vastleggen, verwerk de piek
+              serverless en handel uitnodigingen daarna asynchroon af.
+            </p>
+            <aside class="source-card">
+              <span>De publieke aanleiding</span>
+              <p>
+                “Mensen die urenlang in de wachtrij hebben gestaan, lukt het maar
+                niet om tickets te krijgen.”
+              </p>
+              <a
+                href="https://nos.nl/artikel/2568164-chaos-bij-ticketuitgifte-voor-jubileumfeest-op-a10-in-amsterdam"
+                target="_blank"
+                rel="noreferrer"
+              >
+                NOS, 20 mei 2025 <span aria-hidden="true">↗</span>
+              </a>
+            </aside>
+            <p class="scope-note">
+              <strong>Bewuste scope:</strong> dit is geen kopie van de volledige
+              originele ticketketen. Ik isoleerde het registratieprobleem om
+              mijn alternatief eerlijk te kunnen testen.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section id="frontend" class="dark-section">
+        <div class="section-shell">
+          <div class="section-index section-index-light">02 / Frontend</div>
+          <div class="frontend-heading">
+            <h2>Terug naar het begin.<br /><em>Maar niet terug in de tijd.</em></h2>
+            <p>
+              Mijn frontendloopbaan liep van vanilla JavaScript via Ext JS naar
+              React en TypeScript. HTMX voelt als terugkeren naar de basis - met
+              twintig jaar extra inzicht in wanneer complexiteit wel en niet
+              iets oplevert.
+            </p>
+          </div>
+          <ol class="journey">
+            <li>
+              <span>01</span>
+              <div>
+                <h3>Vanilla JavaScript</h3>
+                <p>
+                  Hier leerde ik wat de browser zelf kan: events, formulieren,
+                  het DOM en HTTP. Die basis is nooit verdwenen.
+                </p>
+              </div>
+            </li>
+            <li>
+              <span>02</span>
+              <div>
+                <h3>Ext JS</h3>
+                <p>
+                  Voor grote bedrijfsapplicaties bracht Ext JS structuur en
+                  herbruikbare componenten, maar ook een zwaar frameworkmodel.
+                </p>
+              </div>
+            </li>
+            <li>
+              <span>03</span>
+              <div>
+                <h3>React + TypeScript</h3>
+                <p>
+                  React was de juiste stap voor rijke interfaces met veel
+                  client-state. Ik moderniseerde er jarenlang complexe software
+                  mee.
+                </p>
+              </div>
+            </li>
+            <li>
+              <span>04</span>
+              <div>
+                <h3>HTMX</h3>
+                <p>
+                  Nu kies ik voor servergestuurde HTML wanneer de interactie
+                  vooral uit formulieren en navigatie bestaat. Minder
+                  JavaScript, minder state, minder bewegende delen.
+                </p>
+              </div>
+            </li>
+          </ol>
+          <blockquote class="choice-quote">
+            <p>
+              De volwassen keuze is niet voor of tegen een framework. Het is
+              weten hoeveel framework een probleem werkelijk nodig heeft.
+            </p>
+          </blockquote>
+        </div>
+      </section>
+
+      <section id="security" class="security-section section-shell">
+        <div class="section-index">03 / Security</div>
+        <div class="security-intro">
+          <h2>Encryptie is geen vinkje. Het is één laag in een systeem.</h2>
+          <div>
+            <p class="large-copy">
+              De Odido-inbraak laat zien hoeveel blijvende schade ontstaat
+              wanneer één toegangspad een grote verzameling persoonsgegevens
+              blootlegt.
+            </p>
+            <p>
+              In februari 2026 verkregen aanvallers via geraffineerde voice
+              phishing toegang tot een klantcontactsysteem. Gegevens uit meer
+              dan zes miljoen accounts werden gestolen, waaronder namen,
+              e-mailadressen, telefoonnummers, IBANs, geboortedata en
+              identificatiegegevens.
+            </p>
+          </div>
+        </div>
+
+        <aside class="odido-callout">
+          <div>
+            <span>De les die ik toepas</span>
+            <h3>Ga ervan uit dat één verdedigingslaag ooit faalt.</h3>
+          </div>
+          <div>
+            <p>
+              Encryptie van opgeslagen data helpt wanneer storage of een back-up
+              wordt buitgemaakt. Ze helpt niet automatisch wanneer een aanvaller
+              via een legitiem applicatiepad leesrechten verkrijgt. Daarom
+              combineer ik cryptografie met minimale gegevensopslag, gescheiden
+              identiteiten, least privilege, anti-abuse en auditability.
+            </p>
+            <div class="source-links">
+              <a
+                href="https://www.odido.nl/veiligheid-eng"
+                target="_blank"
+                rel="noreferrer"
+              >Odido: verloop van de aanval ↗</a>
+              <a
+                href="https://www.reuters.com/business/media-telecom/dutch-telecom-odido-hacked-6-million-accounts-affected-2026-02-12/"
+                target="_blank"
+                rel="noreferrer"
+              >Reuters: omvang en datatypes ↗</a>
+            </div>
+          </div>
+        </aside>
+
+        <div class="security-layers">
+          <article>
+            <span>01</span>
+            <h3>Minimaliseren &amp; scheiden</h3>
+            <p>
+              Alleen noodzakelijke PII wordt opgeslagen. De publieke
+              registratieflow en de administratieve decryptieflow draaien in
+              afzonderlijke Function Apps.
+            </p>
+          </article>
+          <article>
+            <span>02</span>
+            <h3>Versleutelen in de applicatie</h3>
+            <p>
+              PII wordt voor opslag versleuteld met AES-256-GCM, een willekeurige
+              DEK en IV, plus AAD die de ciphertext aan het record bindt.
+            </p>
+          </article>
+          <article>
+            <span>03</span>
+            <h3>Sleutels buiten de data</h3>
+            <p>
+              Iedere DEK wordt gewrapt met een Key Encryption Key in Azure Key
+              Vault. Managed Identity en RBAC bepalen welke component mag
+              decrypten.
+            </p>
+          </article>
+          <article>
+            <span>04</span>
+            <h3>Misbruik &amp; impact begrenzen</h3>
+            <p>
+              Turnstile, rate limiting, gehashte uniqueness-locks, optimistic
+              concurrency, audit logging en monitoring vormen extra
+              verdedigingslagen.
+            </p>
+          </article>
+        </div>
+
+        <div class="crypto-note">
+          <div class="crypto-label">Envelope encryption</div>
+          <code>PII → AES-256-GCM → encrypted record</code>
+          <code>DEK → RSA-OAEP-256 → wrapped key</code>
+          <p>
+            De data en de sleutel die haar leesbaar maakt, volgen bewust
+            verschillende beveiligingspaden.
+          </p>
+        </div>
+      </section>
+
+      <section id="architectuur" class="architecture-section">
+        <div class="section-shell">
+          <div class="section-index section-index-light">04 / Architectuur</div>
+          <div class="architecture-heading">
+            <h2>De browser doet browserwerk. Azure doet schaalwerk.</h2>
+            <p>
+              De gebruiker krijgt direct een gewone HTML-respons. De piek wordt
+              serverless opgevangen; uitnodigingen en verificatie lopen daarna
+              gecontroleerd verder.
+            </p>
+          </div>
+
+          <div class="architecture-flow" role="list" aria-label="Technische flow">
+            <article role="listitem">
+              <span>01</span>
+              <h3>Browser + HTMX</h3>
+              <p>Native formulier, validatie en toegankelijke HTML-responses.</p>
+            </article>
+            <article role="listitem">
+              <span>02</span>
+              <h3>Public Function</h3>
+              <p>Valideert, begrenst misbruik en normaliseert invoer.</p>
+            </article>
+            <article role="listitem">
+              <span>03</span>
+              <h3>Table + Key Vault</h3>
+              <p>Slaat versleutelde PII en gescheiden sleutelmateriaal op.</p>
+            </article>
+            <article role="listitem">
+              <span>04</span>
+              <h3>Queue + Worker</h3>
+              <p>
+                Verwerkt uitnodigingen buiten de piek en onafhankelijk van de
+                browser.
+              </p>
+            </article>
+            <article role="listitem">
+              <span>05</span>
+              <h3>E-mail + SMS</h3>
+              <p>
+                Verstuurt uitnodigingen en verifieert het telefoonnummer via OTP.
+              </p>
+            </article>
+          </div>
+
+          <div class="native-grid">
+            <div class="native-copy">
+              <p class="eyebrow">Progressive enhancement</p>
+              <h3>HTML over the wire, precies waar dat genoeg is.</h3>
+              <p>
+                De pre-registratie is een formulierflow, geen desktopapplicatie
+                in een tabblad. HTMX laat de server aangeven welk HTML-fragment
+                moet worden vervangen. De browser behoudt zijn eigen sterke
+                punten: semantiek, formulieren, focus, geschiedenis en
+                toegankelijkheid.
+              </p>
+              <code class="code-sample">&lt;form hx-ext="json-enc" hx-swap="none"&gt;</code>
+            </div>
+            <div class="native-details">
+              <details open>
+                <summary>Wat gebeurt er na ‘Versturen’?</summary>
+                <ol>
+                  <li>
+                    De browser valideert de invoer en HTMX verstuurt het
+                    formulier.
+                  </li>
+                  <li>
+                    De Function controleert Turnstile, rate limits en de
+                    genormaliseerde waarden.
+                  </li>
+                  <li>
+                    PII wordt lokaal versleuteld; gehashte locks voorkomen
+                    dubbele registraties.
+                  </li>
+                  <li>
+                    De server stuurt een klein HTML-resultaat terug naar het
+                    juiste element.
+                  </li>
+                </ol>
+              </details>
+              <details>
+                <summary>Waarom een queue?</summary>
+                <p>
+                  Een registratiepiek en het versturen van uitnodigingen hebben
+                  een ander tempo. Queue Storage ontkoppelt die twee, zodat
+                  bezoekers niet wachten op downstream werk.
+                </p>
+              </details>
+              <details>
+                <summary>Waarom React hier niet nodig was?</summary>
+                <p>
+                  Deze flow heeft weinig langdurige client-state. React zou
+                  kunnen werken, maar voegt hier meer state- en buildcomplexiteit
+                  toe dan het probleem vraagt. Deze portfoliosite is daarom zelf
+                  ook statische HTML en CSS, zonder React-runtime.
+                </p>
+              </details>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="bewijs" class="delivery-section section-shell">
+        <div class="section-index">05 / Van code naar bewijs</div>
+        <div class="delivery-grid">
+          <div>
+            <h2>Resultaten zijn pas bewijs als de methode controleerbaar is.</h2>
+          </div>
+          <div class="delivery-list">
+            <article>
+              <span>Scope</span>
+              <h3>Wat de cijfers wel zeggen</h3>
+              <p>
+                De genoemde cijfers beschrijven één Azure Load Testing-run van
+                vijf minuten tegen de pre-registratieflow: ruim 126.000
+                succesvolle HTTP-requests, geen mislukte requests en een
+                gerapporteerde p95 onder 650 ms.
+              </p>
+            </article>
+            <article>
+              <span>Grenzen</span>
+              <h3>Wat de cijfers niet bewijzen</h3>
+              <p>
+                Eén run bewijst geen onbeperkte schaalbaarheid, foutloos
+                productiegedrag of gelijkwaardige resultaten in iedere regio en
+                configuratie. Resultaten zijn afhankelijk van testdata,
+                infrastructuur, warming en meetdefinities.
+              </p>
+            </article>
+            <article>
+              <span>Methode</span>
+              <h3>Reproduceerbare beschrijving</h3>
+              <p>
+                Scenario, meetdefinities, acceptatiecriteria en ontbrekende
+                bronartefacten zijn vastgelegd in
+                <a href="/evidence/load-test-methodology.html">de loadtestmethodologie</a>.
+              </p>
+            </article>
+            <article>
+              <span>Code</span>
+              <h3>Publieke repository</h3>
+              <p>
+                De openbare code en documentatie horen in
+                <a
+                  href="https://github.com/Gozzy82/amsterdam750-public"
+                  target="_blank"
+                  rel="noreferrer"
+                >Gozzy82/amsterdam750-public</a>. De bewijsstatus vermeldt
+                expliciet welke originele Azure-exporten nog moeten worden
+                toegevoegd.
+              </p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="closing-section">
+        <div class="section-shell closing-grid">
+          <div>
+            <p class="eyebrow">Wat dit project over mij vertelt</p>
+            <h2>
+              Architectuur is voor mij pas waardevol als ik haar zelf kan bouwen
+              en bewijzen.
+            </h2>
+          </div>
+          <div class="closing-copy">
+            <p>
+              Na ruim twintig jaar softwareontwikkeling herken ik zowel de
+              waarde van moderne frameworks als de kosten ervan. Amsterdam 750
+              brengt die ervaring samen: pragmatische frontendkeuzes, hands-on
+              Azure-engineering, security-by-design en operationele discipline.
+            </p>
+            <p>
+              Ik maakte deze case niet om te laten zien dat ik één stack beheers.
+              Ik maakte haar om te laten zien hoe ik een publiek probleem
+              analyseer, een afgebakende hypothese formuleer en die omzet in
+              werkende software met meetbaar resultaat.
+            </p>
+            <div class="closing-actions">
+              <a
+                class="button button-primary"
+                href="mailto:Gerko.Schrieken@gmail.com"
+              >Neem contact op</a>
+              <a
+                class="button button-quiet"
+                href="https://github.com/Gozzy82/amsterdam750-public"
+                target="_blank"
+                rel="noreferrer"
+              >Code &amp; documentatie ↗</a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <footer class="footer section-shell">
+        <span>Gerko Schrieken · Senior Software Engineer / Solution Architect</span>
+        <span>Amsterdam · 2026</span>
+      </footer>
+    </main>
+  </body>
+</html>
