@@ -2,7 +2,10 @@
 
 A public engineering case study by **Gerko Schrieken** exploring how a high-demand pre-registration flow can be designed to be simple, secure and scalable on Azure.
 
-**Live case study:** https://gozzy82.github.io/amsterdam750-public/
+**Live case study:** https://gozzy82.github.io/amsterdam750-public/  
+**View the implementation:** https://github.com/Gozzy82/amsterdam750-code
+
+The engineering story, architecture decisions and load-test evidence live in this repository. The sanitized application, security and Infrastructure as Code implementation is published separately in `Gozzy82/amsterdam750-code` so reviewers can inspect the actual code without inheriting private development history or operational material.
 
 ## What this demonstrates
 
