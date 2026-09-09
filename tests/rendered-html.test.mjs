@@ -13,9 +13,10 @@ const summary = JSON.parse(
 );
 
 test("builds the public portfolio metadata and evidence links", () => {
-  assert.match(html, /<html\s+lang="nl">/i);
-  assert.match(html, /<title>Amsterdam 750 - Engineering Case Study<\/title>/i);
+  assert.match(html, /<html\s+lang="en">/i);
+  assert.match(html, /<title>Amsterdam 750 — Engineering Case Study<\/title>/i);
   assert.match(html, /https:\/\/github\.com\/Gozzy82\/amsterdam750-public/);
+  assert.match(html, /https:\/\/github\.com\/Gozzy82\/amsterdam750-code/);
   assert.match(html, /\.\/evidence\/load-test-methodology\.html/);
   assert.match(
     html,
